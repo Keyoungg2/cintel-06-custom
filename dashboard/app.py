@@ -3,14 +3,19 @@ from shiny.express import input, ui
 from shinywidgets import render_plotly
 import pandas as pd
 import random
-import datetime
+from datetime import datetime
 from faicons import icon_svg
 from shiny import reactive, render, req
 from collections import deque
+import requests
 
-#Fetch date from local csv file 
-cardio_death_df = pd.read_csv("C:\Users\keyou\Documents\CSIS 44630 - Continuous Intelligence\cintel-06-custom\dashboard\Heart_Disease_Mortality_Data_2019-2021.csv")
-state_name = "'AR','FL','IN','KS','NM','NV','OR','PA','SC','TX','UT','WV','ID','AL','AK','CA','GA','GU','CO','IA','AZ','DE','CT','HI','AS','DC','OH','MI','IL','MN','LA','MD','ME','KY','MA','NC','NY','MO','MS','NE','MT','NJ','ND','NH','MP','TN','SD','PR','RI','OK','VA','WY','WI','WA','VT','VI','US'"
+# Path to the CSV file on the local drive
+file_path = r'C:\Users\keyou\Documents\CSIS 44630 - Continuous Intelligence\cintel-06-custom\dashboard\Heart_Disease_Mortality_Data_2019-2021.csv'
+
+# Read the CSV file into a pandas DataFrame
+cardio_death_df = pd.read_csv(file_path)
+
+state_name = ['AR', 'FL', 'IN', 'KS', 'NM', 'NV', 'OR', 'PA', 'SC', 'TX', 'UT', 'WV', 'ID', 'AL', 'AK', 'CA', 'GA', 'GU', 'CO', 'IA', 'AZ', 'DE', 'CT', 'HI', 'AS', 'DC', 'OH', 'MI', 'IL', 'MN', 'LA', 'MD', 'ME', 'KY', 'MA', 'NC', 'NY', 'MO', 'MS', 'NE', 'MT', 'NJ', 'ND', 'NH', 'MP', 'TN', 'SD', 'PR', 'RI', 'OK', 'VA', 'WY', 'WI', 'WA', 'VT', 'VI', 'US']
 
 DEQUE_SIZE: int = 3
 reactive_value_wrapper = reactive.value(deque(maxlen=DEQUE_SIZE))
@@ -42,9 +47,9 @@ def reactive_calc():
 ui.page_opts(title="K.Young Heart Diease Mortality Visualization", fillable=True)
 
 # Add a Shiny UI sidebar
-with ui.sidebar(open="open"):
-    ui.h1(title= "Heart Diease Mortality", style = "backcolor=")
-    ui.h2("Sidebar")
+with ui.sidebar(open="open", title= "Sidebar", style="background-color: red; color: white;"):
+
+    ui.h1("Heart Diease Mortality")
 
 # Create a dropdown input to choose a column with ui.input_selectize()
     ui.input_selectize("LocationAbbr","State", choices= state_name, selected="unknown")
@@ -61,4 +66,6 @@ with ui.sidebar(open="open"):
     ui.hr()
 
 # Using ui.a() to add a hyperlink to the sidebar
-    ui.a("K.Young GitHub", href="https://github.com/Keyoungg2/cintel-06-custom", target="_blank")
+    ui.a("K.Young GitHub", href="https://github.com/Keyoungg2/cintel-06-custom", target="_blank", style="color: white")
+
+    ui.a("Heat Disease Mortality 2019 - 2021 dataset", href="https://data.cdc.gov/Heart-Disease-Stroke-Prevention/Heart-Disease-Mortality-Data-Among-US-Adults-35-by/55yu-xksw/data_preview", target="_blank", style="color: white")
