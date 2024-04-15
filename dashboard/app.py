@@ -114,7 +114,7 @@ with ui.layout_columns():
 with ui.navset_card_tab(id="tab"):
     # Creating Scatter plot
     with ui.nav_panel("Plotly scatterplot"):
-        ui.card_header("Species Scatterplot")
+        ui.card_header("Heart Disease Mortality by state")
 
         @render_plotly
         def plotly_scatterplot():
@@ -134,7 +134,7 @@ with ui.navset_card_tab(id="tab"):
 
         @render.plot
         def seaborn_histogram():
-            seaborn_hist = sns.histplot(cardio_mortality_df, x=cardio_mortality_df[cardio_mortality_df["Race"].isin(input.select_Race())],  y= cardio_mortality_df['Total_Count_Per_Year'])
+            seaborn_hist = sns.histplot(filtered_data, x=cardio_mortality_df['Race'],  y= cardio_mortality_df['Total_Count_Per_Year'])
             seaborn_hist.set_title("Seaborn Heart Disease Mortality Data")
             seaborn_hist.set_xlabel("Race")
             seaborn_hist.set_ylabel("Count")
@@ -143,6 +143,11 @@ with ui.navset_card_tab(id="tab"):
         def filtered_data():
          race_filtered = cardio_mortality_df[cardio_mortality_df["Race"].isin(input.select_Race())]
          return race_filtered
+        
+        @reactive.calc
+        def gender_filtered_data_():
+         gender_filtered = cardio_mortality_df[cardio_mortality_df["Gender"].isin(input.select_Gender())]
+         return gender_filtered
         
             
 # Show Data
