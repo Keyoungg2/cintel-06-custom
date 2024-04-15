@@ -30,8 +30,7 @@ MAX_DEQUE_SIZE = 35
 # Very easy to expand or modify.
 # --------------------------------------------
 #Pandas pulling Data from local CSV file
-cardio_mortality_df = pd.read_csv("C:\Users\keyou\Documents\CSIS 44630 - Continuous Intelligence\cintel-06-custom\dashboard\Heart_Disease_Mortality_Data_2019-2021.csv")
-#Defining state name side bar
+cardio_mortality_df = pd.read_csv("https://raw.githubusercontent.com/Keyoungg2/cintel-06-custom/main/dashboard/Heart_Disease_Mortality_Data_2019-2021.csv")
 state_name = ['AR', 'FL', 'IN', 'KS', 'NM', 'NV', 'OR', 'PA', 'SC', 'TX', 'UT', 'WV', 'ID', 'AL', 'AK', 'CA', 'GA', 'GU', 'CO', 'IA', 'AZ', 'DE', 'CT', 'HI', 'AS', 'DC', 'OH', 'MI', 'IL', 'MN', 'LA', 'MD', 'ME', 'KY', 'MA', 'NC', 'NY', 'MO', 'MS', 'NE', 'MT', 'NJ', 'ND', 'NH', 'MP', 'TN', 'SD', 'PR', 'RI', 'OK', 'VA', 'WY', 'WI', 'WA', 'VT', 'VI', 'US']
 #Creating total count for Scatter plot
 cardio_mortality_df['Total_Count_Per_Year'] =cardio_mortality_df.groupby('State')['State'].transform('count')
