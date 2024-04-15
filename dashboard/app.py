@@ -142,6 +142,8 @@ with ui.layout_columns(style="background-color: red; color: white;"):
             def cardio_mortality_grid():
                 return render.DataGrid(cardio_mortality_df)
             
-    @reactive.calc
-    def filtered_data():
-        return cardio_mortality_df[cardio_mortality_df["Gender"].isin(input.select_Gender())]
+@reactive.calc
+def filtered_data():
+     gender_filtered= cardio_mortality_df[cardio_mortality_df["Gender"].isin(input.select_Gender())]
+     state_name_filtered= cardio_mortality_df[cardio_mortality_df["State"].isin(input.select_Gender())]
+     return  gender_filtered, state_name_filtered
