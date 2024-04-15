@@ -12,7 +12,7 @@ from collections import deque
 import pandas as pd
 import plotly.express as px
 from shinywidgets import render_plotly
-from scipy import stats
+import seaborn as sns
 from faicons import icon_svg
 import ipywidgets as widgets
 from IPython.display import display
@@ -77,7 +77,14 @@ with ui.sidebar(open="open", title= "Sidebar", style="background-color: red; col
 
     # Create a dropdown input to choose a column with ui.input_selectize()
     ui.h2("Sidebar")
-    ui.input_selectize("LocationAbbr","State", choices= state_name, selected="unknown")
+    ui.input_selectize("State","State", choices= state_name, selected='Unknown')
+    
+    ui.input_checkbox_group(
+        "select_Race",
+        "Race",
+         ['American Indian', 'Alaska Native','Asian','Black','Hispanic','More than one race','Native Hawaiian or Other Pacific Islander','Unkown','White'],
+        selected=["Unkown"],
+        inline=True)
 
     ui.input_checkbox_group(
     "select_Gender",
@@ -101,39 +108,43 @@ with ui.layout_columns():
         @render.text
         def display_count():
             deque_snapshot, cardio_mortality_df, latest_dictionary_entry = reactive_calc_combined()
-            return f"{latest_dictionary_entry['deaths']}"
-            
-# Creating ui navigation panel of plots using Plotly
+            return f"{latest_dictionary_entry['deaths']}"            
+
+
 with ui.navset_card_tab(id="tab"):
-        # Creating Scatter plot
-        with ui.nav_panel("Plotly scatterplot"):
-            ui.card_header("Species Scatterplot")
-    
-            @render_plotly
-            def plotly_scatterplot():
-                # Scatterplot for state mortality
-                return px.scatter(
-                    cardio_mortality_df,
-                    x=cardio_mortality_df["State"],
-                    y=cardio_mortality_df["Total_Count_Per_Year"],
-                    color="State",
-                    facet_col="Gender",
-                    title="Death Rates by year and Sex"
+    # Creating Scatter plot
+    with ui.nav_panel("Plotly scatterplot"):
+        ui.card_header("Species Scatterplot")
+
+        @render_plotly
+        def plotly_scatterplot():
+        # Scatterplot for state mortality
+            return px.scatter(
+                cardio_mortality_df,
+                x=cardio_mortality_df["State"],
+                y=cardio_mortality_df["Total_Count_Per_Year"],
+                color="State",
+                facet_col="Gender",
+                title="Death Rates by year and Sex"
                 )
 
-        # Creating Plotly Histogram Chart plot
-        with ui.nav_panel("Plotly Histogram Chart"):
-            ui.card_header("Heart Disease Mortality by Race")
-        
-            @render_plotly
-            def plotly_histo():
-                histo_chart = px.histogram(
-                    cardio_mortality_df,
-                    x="State",
-                    facet_col="Race",
-                    title="Heart Disease Mortality by Race")
-                return histo_chart
+    # Creating Seaborn Histogram Chart plot
+    with ui.nav_panel("Seaborn Histogram Chart"):
+        ui.card_header("Heart Disease Mortality by Race")
 
+        @render.plot
+        def seaborn_histogram():
+            seaborn_hist = sns.histplot(cardio_mortality_df, x=cardio_mortality_df[cardio_mortality_df["Race"].isin(input.select_Race())],  y= cardio_mortality_df['Total_Count_Per_Year'])
+            seaborn_hist.set_title("Seaborn Heart Disease Mortality Data")
+            seaborn_hist.set_xlabel("Race")
+            seaborn_hist.set_ylabel("Count")
+
+        @reactive.calc
+        def filtered_data():
+         race_filtered = cardio_mortality_df[cardio_mortality_df["Race"].isin(input.select_Race())]
+         return race_filtered
+        
+            
 # Show Data
 with ui.layout_columns(style="background-color: red; color: white;"):
     with ui.accordion():
@@ -142,8 +153,3 @@ with ui.layout_columns(style="background-color: red; color: white;"):
             def cardio_mortality_grid():
                 return render.DataGrid(cardio_mortality_df)
             
-@reactive.calc
-def filtered_data():
-     gender_filtered= cardio_mortality_df[cardio_mortality_df["Gender"].isin(input.select_Gender())]
-     state_name_filtered= cardio_mortality_df[cardio_mortality_df["State"].isin(input.select_Gender())]
-     return  gender_filtered, state_name_filtered
