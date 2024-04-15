@@ -134,7 +134,7 @@ with ui.navset_card_tab(id="tab"):
 
         @render.plot
         def seaborn_histogram():
-            seaborn_hist = sns.histplot(filtered_data, x=cardio_mortality_df['Race'],  y= cardio_mortality_df['Total_Count_Per_Year'])
+            seaborn_hist = sns.histplot(filtered_data(), x=cardio_mortality_df['Race'],  y= cardio_mortality_df['Total_Count_Per_Year'])
             seaborn_hist.set_title("Seaborn Heart Disease Mortality Data")
             seaborn_hist.set_xlabel("Race")
             seaborn_hist.set_ylabel("Count")
