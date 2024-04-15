@@ -14,8 +14,7 @@ import plotly.express as px
 from shinywidgets import render_plotly
 import seaborn as sns
 from faicons import icon_svg
-from io import StringIO
-import requests
+
 # --------------------------------------------
 DEQUE_SIZE: int = 7
 reactive_value_wrapper = reactive.value(deque(maxlen=DEQUE_SIZE))
@@ -31,7 +30,6 @@ MAX_DEQUE_SIZE = 35
 # --------------------------------------------
 #Pandas pulling Data from local CSV file
 url="https://raw.githubusercontent.com/Keyoungg2/cintel-06-custom/main/dashboard/Heart_Disease_Mortality_Data_2019-2021.csv"
-s=requests.get(url).text
 cardio_mortality_df=pd.read_csv(url)
 
 state_name = ['AR', 'FL', 'IN', 'KS', 'NM', 'NV', 'OR', 'PA', 'SC', 'TX', 'UT', 'WV', 'ID', 'AL', 'AK', 'CA', 'GA', 'GU', 'CO', 'IA', 'AZ', 'DE', 'CT', 'HI', 'AS', 'DC', 'OH', 'MI', 'IL', 'MN', 'LA', 'MD', 'ME', 'KY', 'MA', 'NC', 'NY', 'MO', 'MS', 'NE', 'MT', 'NJ', 'ND', 'NH', 'MP', 'TN', 'SD', 'PR', 'RI', 'OK', 'VA', 'WY', 'WI', 'WA', 'VT', 'VI', 'US']
