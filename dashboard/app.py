@@ -34,7 +34,7 @@ cardio_mortality_df = pd.read_csv(r"C:\Users\keyou\Documents\CSIS 44630 - Contin
 state_name = ['AR', 'FL', 'IN', 'KS', 'NM', 'NV', 'OR', 'PA', 'SC', 'TX', 'UT', 'WV', 'ID', 'AL', 'AK', 'CA', 'GA', 'GU', 'CO', 'IA', 'AZ', 'DE', 'CT', 'HI', 'AS', 'DC', 'OH', 'MI', 'IL', 'MN', 'LA', 'MD', 'ME', 'KY', 'MA', 'NC', 'NY', 'MO', 'MS', 'NE', 'MT', 'NJ', 'ND', 'NH', 'MP', 'TN', 'SD', 'PR', 'RI', 'OK', 'VA', 'WY', 'WI', 'WA', 'VT', 'VI', 'US']
 #Creating total count for Scatter plot
 cardio_mortality_df['Total_Count_Per_Year'] =cardio_mortality_df.groupby('State')['State'].transform('count')
-cardio_mortality_df['Total_Count_Race'] =cardio_mortality_df.groupby('Race')['Race'].transform('count')
+cardio_mortality_race_df = cardio_mortality_df.groupby('Race').size().reset_index(name='Count')
 
 @reactive.calc()
 def reactive_calc_combined():
@@ -76,7 +76,7 @@ with ui.sidebar(open="open", title= "Sidebar", style="background-color: red; col
 
     # Create a dropdown input to choose a column with ui.input_selectize()
     ui.h2("Sidebar")
-    ui.input_selectize("State","State", choices= state_name, selected='Unknown')
+    ui.input_selectize("State","State", choices= state_name, selected='US')
     
     ui.input_checkbox_group(
         "select_Race",
@@ -130,25 +130,25 @@ with ui.navset_card_tab(id="tab"):
     # Creating Seaborn Histogram Chart plot
     with ui.nav_panel("Seaborn Histogram Chart"):
         ui.card_header("Heart Disease Mortality by Race")
-
-        @render.plot
-        def seaborn_histogram():
-            seaborn_hist = sns.histplot(cardio_mortality_df, x=cardio_mortality_df['Race'],  y= cardio_mortality_df['Total_Count_Per_Year'])
-            seaborn_hist.set_title("Seaborn Heart Disease Mortality Data")
-            seaborn_hist.set_xlabel("Race")
-            seaborn_hist.set_ylabel("Count")
+        
+        @render_plotly
+        def plotly_histo():
+            histo_chart = px.histogram(
+            filtered_data(),
+            x= "Race",
+            title="Heart Disease Mortality by Race")
+            return histo_chart
 
         @reactive.calc
         def filtered_data():
-         race_filtered = cardio_mortality_df[cardio_mortality_df["Race"].isin(input.select_Race())]
-         return race_filtered
+            race_filtered = cardio_mortality_race_df[cardio_mortality_race_df["Race"].isin(input.select_Race())]
+            return race_filtered
         
         @reactive.calc
         def gender_filtered_data_():
          gender_filtered = cardio_mortality_df[cardio_mortality_df["Gender"].isin(input.select_Gender())]
          return gender_filtered
         
-            
 # Show Data
 with ui.layout_columns(style="background-color: red; color: white;"):
     with ui.accordion():
@@ -156,4 +156,3 @@ with ui.layout_columns(style="background-color: red; color: white;"):
             @render.data_frame
             def cardio_mortality_grid():
                 return render.DataGrid(cardio_mortality_df)
-            
